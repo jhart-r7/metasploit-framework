@@ -34,18 +34,19 @@ class Core
 
   # Session command options
   @@sessions_opts = Rex::Parser::Arguments.new(
-    "-c" => [ true,  "Run a command on the session given with -i, or all"],
-    "-h" => [ false, "Help banner"                                    ],
-    "-i" => [ true,  "Interact with the supplied session ID"          ],
-    "-l" => [ false, "List all active sessions"                       ],
-    "-v" => [ false, "List verbose fields"                            ],
-    "-q" => [ false, "Quiet mode"                                     ],
-    "-k" => [ true,  "Terminate sessions by session ID and/or range"  ],
-    "-K" => [ false, "Terminate all sessions"                         ],
-    "-s" => [ true,  "Run a script on the session given with -i, or all"],
-    "-r" => [ false, "Reset the ring buffer for the session given with -i, or all"],
-    "-u" => [ true,  "Upgrade a shell to a meterpreter session on many platforms" ],
-    "-t" => [ true,  "Set a response timeout (default: 15)"])
+    "-c"  => [ true,  "Run a command on the session given with -i, or all"          ],
+    "-h"  => [ false, "Help banner"                                                 ],
+    "-i"  => [ true,  "Interact with the supplied session ID   "                    ],
+    "-l"  => [ false, "List all active sessions"                                    ],
+    "-v"  => [ false, "List sessions in verbose mode"                               ],
+    "-q"  => [ false, "Quiet mode"                                                  ],
+    "-k"  => [ true,  "Terminate sessions by session ID and/or range"               ],
+    "-K"  => [ false, "Terminate all sessions"                                      ],
+    "-s"  => [ true,  "Run a script on the session given with -i, or all"           ],
+    "-r"  => [ false, "Reset the ring buffer for the session given with -i, or all" ],
+    "-u"  => [ true,  "Upgrade a shell to a meterpreter session on many platforms"  ],
+    "-t"  => [ true,  "Set a response timeout (default: 15)"                        ],
+    "-x" =>  [ false, "Show extended information in the session table"              ])
 
   @@jobs_opts = Rex::Parser::Arguments.new(
     "-h" => [ false, "Help banner."                                   ],
@@ -743,6 +744,7 @@ class Core
   def cmd_info_help
     print_line "Usage: info <module name> [mod2 mod3 ...]"
     print_line
+    print_line "Optionally the flag '-j' will print the data in json format"
     print_line "Queries the supplied module or modules for information. If no module is given,"
     print_line "show info for the currently active module."
     print_line
@@ -752,9 +754,19 @@ class Core
   # Displays information about one or more module.
   #
   def cmd_info(*args)
+    dump_json = false
+    if args.include?('-j')
+      args.delete('-j')
+      dump_json = true
+    end
+
     if (args.length == 0)
       if (active_module)
-        print(Serializer::ReadableText.dump_module(active_module))
+        if dump_json
+          print(Serializer::Json.dump_module(active_module) + "\n")
+        else
+          print(Serializer::ReadableText.dump_module(active_module))
+        end
         return true
       else
         cmd_info_help
@@ -770,6 +782,8 @@ class Core
 
       if (mod == nil)
         print_error("Invalid module: #{name}")
+      elsif dump_json
+        print(Serializer::Json.dump_module(mod) + "\n")
       else
         print(Serializer::ReadableText.dump_module(mod))
       end
@@ -1156,7 +1170,7 @@ class Core
           output += "\n"
         end
 
-        print(output +"\n")
+        print(output + "\n")
       else
         print_line("Invalid Thread ID")
       end
@@ -1238,7 +1252,7 @@ class Core
         print_status("Successfully loaded plugin: #{inst.name}")
       end
     rescue ::Exception => e
-      elog("Error loading plugin #{path}: #{e}\n\n#{e.backtrace.join("\n")}", src = 'core', level = 0, from = caller)
+      elog("Error loading plugin #{path}: #{e}\n\n#{e.backtrace.join("\n")}", 'core', 0, caller)
       print_error("Failed to load plugin from #{path}: #{e}")
     end
   end
@@ -1744,12 +1758,13 @@ class Core
   #
   def cmd_sessions(*args)
     begin
-    method  = nil
-    quiet   = false
-    verbose = false
-    sid     = nil
-    cmds    = []
-    script  = nil
+    method   = nil
+    quiet    = false
+    show_extended = false
+    verbose  = false
+    sid      = nil
+    cmds     = []
+    script   = nil
     reset_ring = false
     response_timeout = 15
 
@@ -1766,6 +1781,8 @@ class Core
       when "-c"
         method = 'cmd'
         cmds << val if val
+      when "-x"
+        show_extended = true
       when "-v"
         verbose = true
       # Do something with the supplied session identifier instead of
@@ -2028,7 +2045,7 @@ class Core
       end
     when 'list',nil
       print_line
-      print(Serializer::ReadableText.dump_sessions(framework, :verbose => verbose))
+      print(Serializer::ReadableText.dump_sessions(framework, :show_extended => show_extended, :verbose => verbose))
       print_line
     end
 
@@ -2209,7 +2226,7 @@ class Core
     end
 
     mod.options.sorted.each { |e|
-      name, opt = e
+      name, _opt = e
       res << name
     }
 
@@ -2231,7 +2248,7 @@ class Core
       p = framework.payloads.create(mod.datastore['PAYLOAD'])
       if (p)
         p.options.sorted.each { |e|
-          name, opt = e
+          name, _opt = e
           res << name
         }
       end
@@ -2441,7 +2458,7 @@ class Core
     return tabs
   end
 
- def cmd_get_help
+  def cmd_get_help
     print_line "Usage: get var1 [var2 ...]"
     print_line
     print_line "The get command is used to get the value of one or more variables."
@@ -3068,7 +3085,7 @@ class Core
         option_values_target_addrs().each do |addr|
           res << addr
         end
-      when 'LHOST', 'SRVHOST'
+      when 'LHOST', 'SRVHOST', 'REVERSELISTENERBINDADDRESS'
         rh = self.active_module.datastore['RHOST'] || framework.datastore['RHOST']
         if rh and not rh.empty?
           res << Rex::Socket.source_address(rh)
@@ -3077,7 +3094,9 @@ class Core
           # getifaddrs was introduced in 2.1.2
           if Socket.respond_to?(:getifaddrs)
             ifaddrs = Socket.getifaddrs.find_all do |ifaddr|
-              ((ifaddr.flags & Socket::IFF_LOOPBACK) == 0) && ifaddr.addr.ip?
+              ((ifaddr.flags & Socket::IFF_LOOPBACK) == 0) &&
+                ifaddr.addr &&
+                ifaddr.addr.ip?
             end
             res += ifaddrs.map { |ifaddr| ifaddr.addr.ip_address }
           end
