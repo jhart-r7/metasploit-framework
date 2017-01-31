@@ -24,6 +24,9 @@ class MetasploitModule < Msf::Auxiliary
       'References'  =>
         [
           ['URL', 'http://docs.oracle.com/javase/8/docs/platform/rmi/spec/rmiTOC.html']
+          # there isn't enough detail to differentiate between these
+          [ 'CVE', 'CVE-2011-3556' ],
+          [ 'CVE', 'CVE-2011-3557' ]
         ]
     )
 

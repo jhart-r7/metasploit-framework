@@ -24,6 +24,9 @@ class MetasploitModule < Msf::Auxiliary
           [ 'URL', 'http://download.oracle.com/javase/1.3/docs/guide/rmi/spec/rmi-protocol.html'],
           # Placeholder reference for matching
           [ 'MSF', 'java_rmi_server']
+          # there isn't enough detail to differentiate between these
+          [ 'CVE', 'CVE-2011-3556' ],
+          [ 'CVE', 'CVE-2011-3557' ]
         ],
       'DisclosureDate' => 'Oct 15 2011'
     )
