@@ -10,9 +10,7 @@ module Msf
 
         register_options(
           [
-            Opt::RPORT(Rex::Proto::MQTT::DEFAULT_PORT),
-            OptString.new('USERNAME', [false, 'The user to authenticate as']),
-            OptString.new('PASSWORD', [false, 'The password to authenticate with'])
+            Opt::RPORT(Rex::Proto::MQTT::DEFAULT_PORT)
           ]
         )
 
@@ -23,14 +21,15 @@ module Msf
           ]
         )
 
-        register_autofilter_ports([Rex::Proto::MQTT::DEFAULT_PORT, Rex::Proto::MQTT::DEFAULT_PORT])
+        register_autofilter_ports([Rex::Proto::MQTT::DEFAULT_PORT, Rex::Proto::MQTT::DEFAULT_SSL_PORT])
       end
 
       def setup
         fail_with(Failure::BadConfig, 'READ_TIMEOUT must be > 0') if read_timeout <= 0
+
         client_id_arg = datastore['CLIENT_ID']
-        if client_id_arg
-          fail_with(Failure::BadConfig, 'CLIENT_ID must be a non-empty string') if client_id_arg.blank?
+        if client_id_arg && client_id_arg.blank?
+          fail_with(Failure::BadConfig, 'CLIENT_ID must be a non-empty string')
         end
       end
 
@@ -39,13 +38,13 @@ module Msf
       end
 
       def client_id
-        datastore['CLIENT_ID'] || Rex::Text.rand_text_alpha(1 + rand(10))
+        datastore['CLIENT_ID'] || 'mqtt-' + Rex::Text.rand_text_alpha(1 + rand(10))
       end
 
       # creates a new mqtt client for use against the connected socket
       def mqtt_client
         client_opts = {
-          client_id: client_id.to_s,
+          client_id: client_id,
           username: datastore['USERNAME'],
           password: datastore['PASSWORD'],
           read_timeout: read_timeout
