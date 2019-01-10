@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -24,8 +24,8 @@ class MetasploitModule < Msf::Auxiliary
       },
       'Author'          =>
         [
-          'Evex',                             # Vulnerability discovery
-          'Rob Carr <rob[at]rastating.com>'   # Metasploit module
+          'Evex',     # Vulnerability discovery
+          'rastating' # Metasploit module
         ],
       'License'         => MSF_LICENSE,
       'References'      =>

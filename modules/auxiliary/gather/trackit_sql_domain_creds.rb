@@ -1,12 +1,11 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 require 'openssl'
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::Tcp
   include Msf::Auxiliary::Report
 
@@ -30,7 +29,7 @@ class MetasploitModule < Msf::Auxiliary
           [ 'CVE', '2014-4872' ],
           [ 'OSVDB', '112741' ],
           [ 'US-CERT-VU', '121036' ],
-          [ 'URL', 'http://seclists.org/fulldisclosure/2014/Oct/34' ]
+          [ 'URL', 'https://seclists.org/fulldisclosure/2014/Oct/34' ]
         ],
       'DisclosureDate' => 'Oct 7 2014'
     ))

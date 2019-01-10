@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -75,7 +75,7 @@ class MetasploitModule < Msf::Post
         select(nil, nil, nil, datastore['DELAY'])
         begin
           data = session.espia.espia_image_get_dev_screen
-        rescue RequestError => e
+        rescue Rex::Post::Meterpreter::RequestError => e
           print_error("Error taking the screenshot: #{e.class} #{e} #{e.backtrace}")
           return false
         end
@@ -134,10 +134,10 @@ class MetasploitModule < Msf::Post
         print_status("Migrating to explorer.exe pid: #{p['pid']}")
         begin
           session.core.migrate(p['pid'].to_i)
-          print_status("Migration successful")
+          print_good("Migration successful")
           return p['pid']
         rescue
-          print_status("Migration failed.")
+          print_bad("Migration failed")
           return nil
         end
       end

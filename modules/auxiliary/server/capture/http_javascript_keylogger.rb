@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpServer::HTML
 
   def initialize(info = {})
@@ -38,7 +37,6 @@ class MetasploitModule < Msf::Auxiliary
     @client_cache = {}
 
     # Starts Web Server
-    print_status("Listening on #{datastore['SRVHOST']}:#{datastore['SRVPORT']}...")
     exploit
   end
 
@@ -300,5 +298,4 @@ EOS
 EOS
     return code
   end
-
 end

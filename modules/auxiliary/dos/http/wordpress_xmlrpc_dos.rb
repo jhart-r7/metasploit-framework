@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HTTP::Wordpress
   include Msf::Auxiliary::Dos
 
@@ -24,6 +23,7 @@ class MetasploitModule < Msf::Auxiliary
       'License'       => MSF_LICENSE,
       'References'    =>
         [
+          ['CVE', '2014-5266'],
           ['URL', 'http://wordpress.org/news/2014/08/wordpress-3-9-2/'],
           ['URL', 'http://www.breaksec.com/?p=6362'],
           ['URL', 'http://mashable.com/2014/08/06/wordpress-xml-blowup-dos/'],

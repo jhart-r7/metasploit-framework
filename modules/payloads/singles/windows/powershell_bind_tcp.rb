@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -53,7 +53,7 @@ module MetasploitModule
   #
   # Override the exec command string
   #
-  def command_string
+  def powershell_command
     generate_powershell_code("Bind")
   end
 end

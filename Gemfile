@@ -18,14 +18,14 @@ group :development do
   gem 'pry'
   # module documentation
   gem 'octokit'
-  # metasploit-aggregator as a framework only option for now
   # Metasploit::Aggregator external session proxy
-  gem 'metasploit-aggregator'
+  # disabled during 2.5 transition until aggregator is available
+  #gem 'metasploit-aggregator'
 end
 
 group :development, :test do
   # automatically include factories from spec/factories
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   # Make rspec output shorter and more useful
   gem 'fivemat'
   # running documentation generation tasks and rspec tasks
@@ -34,14 +34,10 @@ group :development, :test do
   # environment is development
   gem 'rspec-rails'
   gem 'rspec-rerun'
+  gem 'swagger-blocks'
 end
 
 group :test do
-  # cucumber extension for testing command line applications, like msfconsole
-  gem 'aruba'
-  # cucumber + automatic database cleaning with database_cleaner
-  gem 'cucumber-rails', :require => false
-  gem 'shoulda-matchers'
   # Manipulate Time.now in specs
   gem 'timecop'
 end

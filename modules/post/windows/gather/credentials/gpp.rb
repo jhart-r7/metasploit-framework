@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -246,8 +246,8 @@ class MetasploitModule < Msf::Post
 
     results.each do |result|
       if datastore['STORE']
-        stored_path = store_loot('windows.gpp.xml', 'text/plain', session, xmlfile[:xml], filetype, xmlfile[:path])
-        print_status("XML file saved to: #{stored_path}")
+        stored_path = store_loot('microsoft.windows.gpp', 'text/xml', session, xmlfile[:xml], filetype, xmlfile[:path])
+        print_good("XML file saved to: #{stored_path}")
         print_line
       end
 

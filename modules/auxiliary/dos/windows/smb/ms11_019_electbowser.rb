@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::Udp
   #include Msf::Exploit::Remote::SMB::Client
   include Auxiliary::Dos
@@ -37,7 +36,7 @@ class MetasploitModule < Msf::Auxiliary
           [ 'OSVDB', '70881' ],
           [ 'MSB', 'MS11-019' ],
           [ 'EDB', '16166' ],
-          [ 'URL', 'http://seclists.org/fulldisclosure/2011/Feb/285' ]
+          [ 'URL', 'https://seclists.org/fulldisclosure/2011/Feb/285' ]
         ],
       'Author'         => [ 'Cupidon-3005', 'jduck' ],
       'License'        => MSF_LICENSE
@@ -170,5 +169,4 @@ class MetasploitModule < Msf::Auxiliary
     ret << svc
     ret
   end
-
 end

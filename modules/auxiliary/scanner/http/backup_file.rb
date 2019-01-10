@@ -1,13 +1,11 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 require 'rex/proto/http'
 
-
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpClient
   include Msf::Auxiliary::WmapScanFile
   include Msf::Auxiliary::Scanner
@@ -45,14 +43,14 @@ class MetasploitModule < Msf::Auxiliary
 
     bakextensions.each do |ext|
       file = normalize_uri(datastore['PATH'])+ext
-      check_for_file(file)
+      check_for_file(file, ip)
     end
     if datastore['PATH'] =~ %r#(.*)(/.+$)#
       file = $1 + $2.sub('/', '/.') + '.swp'
-      check_for_file(file)
+      check_for_file(file, ip)
     end
   end
-  def check_for_file(file)
+  def check_for_file(file, ip)
     begin
       res = send_request_cgi({
           'uri'  		=>  file,
@@ -61,7 +59,7 @@ class MetasploitModule < Msf::Auxiliary
           }, 20)
 
       if (res and res.code >= 200 and res.code < 300)
-        print_status("Found #{wmap_base_url}#{file}")
+        print_good("Found #{wmap_base_url}#{file}")
 
         report_web_vuln(
           :host	=> ip,
@@ -90,5 +88,4 @@ class MetasploitModule < Msf::Auxiliary
 
 
   end
-
 end

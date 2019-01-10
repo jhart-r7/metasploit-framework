@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -11,12 +11,6 @@ class MetasploitModule < Msf::Auxiliary
   include Msf::Exploit::Remote::SMB::Client::RemotePaths
   include Msf::Auxiliary::Report
   include Msf::Auxiliary::Scanner
-
-  # Aliases for common classes
-  SIMPLE = Rex::Proto::SMB::SimpleClient
-  XCEPT  = Rex::Proto::SMB::Exceptions
-  CONST  = Rex::Proto::SMB::Constants
-
 
   def initialize
     super(
@@ -40,7 +34,7 @@ class MetasploitModule < Msf::Auxiliary
 
   def smb_download
     vprint_status("Connecting...")
-    connect()
+    connect(versions: [1, 2])
     smb_login()
 
     vprint_status("#{peer}: Mounting the remote share \\\\#{rhost}\\#{datastore['SMBSHARE']}'...")
@@ -51,7 +45,7 @@ class MetasploitModule < Msf::Auxiliary
         vprint_status("Trying to download #{remote_path}...")
 
         data = ''
-        fd = simple.open("\\#{remote_path}", 'ro')
+        fd = simple.open("#{remote_path}", 'o')
         begin
           data = fd.read
         ensure
@@ -76,5 +70,4 @@ class MetasploitModule < Msf::Auxiliary
       print_error("Unable to login: #{e.message}")
     end
   end
-
 end

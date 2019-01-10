@@ -36,7 +36,6 @@ class Console::CommandDispatcher::Android
       'set_audio_mode'    => 'Set Ringer Mode',
       'wakelock'          => 'Enable/Disable Wakelock',
     }
-
     reqs = {
       'dump_sms'         => ['android_dump_sms'],
       'dump_contacts'    => ['android_dump_contacts'],
@@ -53,11 +52,7 @@ class Console::CommandDispatcher::Android
       'set_audio_mode'   => ['android_set_audio_mode'],
       'wakelock'         => ['android_wakelock'],
     }
-
-    # Ensure any requirements of the command are met
-    all.delete_if do |cmd, _desc|
-      reqs[cmd].any? { |req| !client.commands.include?(req) }
-    end
+    filter_commands(all, reqs)
   end
 
   def interval_collect_usage
@@ -390,7 +385,6 @@ class Console::CommandDispatcher::Android
   end
 
   def cmd_geolocate(*args)
-
     generate_map = false
     geolocate_opts = Rex::Parser::Arguments.new(
       '-h' => [ false, 'Help Banner' ],
@@ -428,10 +422,8 @@ class Console::CommandDispatcher::Android
   def cmd_dump_calllog(*args)
     path = "calllog_dump_#{Time.new.strftime('%Y%m%d%H%M%S')}.txt"
     dump_calllog_opts = Rex::Parser::Arguments.new(
-
       '-h' => [ false, 'Help Banner' ],
       '-o' => [ true, 'Output path for call log']
-
     )
 
     dump_calllog_opts.parse(args) do |opt, _idx, val|
@@ -517,7 +509,7 @@ class Console::CommandDispatcher::Android
       '-h' => [ false, 'Help Banner' ],
       '-d' => [ true, 'Destination number' ],
       '-t' => [ true, 'SMS body text' ],
-      '-dr' => [ false, 'Wait for delivery report' ]
+      '-r' => [ false, 'Wait for delivery report' ]
     )
 
     dest = ''
@@ -535,7 +527,7 @@ class Console::CommandDispatcher::Android
         dest = val
       when '-t'
         body = val
-      when '-dr'
+      when '-r'
         dr = true
       end
     end
@@ -570,17 +562,28 @@ class Console::CommandDispatcher::Android
 
   def cmd_wlan_geolocate(*args)
     wlan_geolocate_opts = Rex::Parser::Arguments.new(
-      '-h' => [ false, 'Help Banner' ]
+      '-h' => [ false, 'Help Banner' ],
+      '-a' => [ true, 'API key' ],
     )
 
-    wlan_geolocate_opts.parse(args) do |opt, _idx, _val|
+    api_key = ''
+    wlan_geolocate_opts.parse(args) do |opt, _idx, val|
       case opt
       when '-h'
         print_line('Usage: wlan_geolocate')
         print_line('Tries to get device geolocation from WLAN information and Google\'s API')
         print_line(wlan_geolocate_opts.usage)
         return
+      when '-a'
+        api_key = val
       end
+    end
+
+    if api_key.blank?
+      print_error("You must enter an api_key")
+      print_error("e.g. wlan_geolocate -a YOUR_API_KEY")
+      print_line(wlan_geolocate_opts.usage)
+      return
     end
 
     log = client.android.wlan_geolocate
@@ -597,9 +600,10 @@ class Console::CommandDispatcher::Android
       return
     end
     g = Rex::Google::Geolocation.new
+    g.set_api_key(api_key)
 
     wlan_list.each do |wlan|
-      g.add_wlan(*wlan)
+      g.add_wlan(wlan[0], wlan[2]) # bssid, signalstrength
     end
     begin
       g.fetch!
@@ -607,7 +611,7 @@ class Console::CommandDispatcher::Android
       print_error("Error: #{e}")
     else
       print_status(g.to_s)
-      print_status("Google Maps URL:  #{g.google_maps_url}")
+      print_status("Google Maps URL: #{g.google_maps_url}")
     end
   end
 

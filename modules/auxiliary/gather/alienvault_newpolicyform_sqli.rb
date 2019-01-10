@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
-## Current source: https://github.com/rapid7/metasploit-framework
-###
+# This module requires Metasploit: https://metasploit.com/download
+# Current source: https://github.com/rapid7/metasploit-framework
+##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpClient
 
   def initialize(info={})
@@ -23,6 +22,7 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'References'     =>
         [
+          ['CVE', '2014-5383'],
           ['OSVDB', '106815'],
           ['EDB', '33317'],
           ['URL', 'http://forums.alienvault.com/discussion/2690/security-advisories-v4-6-1-and-lower']
@@ -157,5 +157,4 @@ class MetasploitModule < Msf::Auxiliary
       return nil
     end
   end
-
 end

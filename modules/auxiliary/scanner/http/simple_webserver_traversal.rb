@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Auxiliary::Scanner
   include Msf::Auxiliary::Report
   include Msf::Exploit::Remote::HttpClient
@@ -18,9 +17,10 @@ class MetasploitModule < Msf::Auxiliary
       },
       'References'     =>
         [
+          [ 'CVE', '2002-1864' ],
           [ 'OSVDB', '88877' ],
           [ 'EDB', '23886' ],
-          [ 'URL', 'http://seclists.org/bugtraq/2013/Jan/12' ]
+          [ 'URL', 'https://seclists.org/bugtraq/2013/Jan/12' ]
         ],
       'Author'         =>
         [

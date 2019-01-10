@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Auxiliary::Scanner
   include Msf::Auxiliary::Report
   include Msf::Exploit::Remote::HttpClient
@@ -19,6 +18,7 @@ class MetasploitModule < Msf::Auxiliary
       },
       'References'     =>
         [
+          [ 'CVE', '2012-1465' ],
           [ 'OSVDB', '79863' ],
           [ 'URL', 'http://aluigi.altervista.org/adv/netdecision_1-adv.txt' ],
         ],

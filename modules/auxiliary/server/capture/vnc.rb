@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::TcpServer
   include Msf::Auxiliary::Report
 
@@ -42,7 +41,6 @@ class MetasploitModule < Msf::Auxiliary
       print_error("CHALLENGE syntax must match 00112233445566778899AABBCCDDEEFF")
       return
     end
-    print_status("Listening on #{datastore['SRVHOST']}:#{datastore['SRVPORT']}...")
     exploit()
   end
 
@@ -113,7 +111,7 @@ class MetasploitModule < Msf::Auxiliary
     elsif @state[c][:chall]
       c.put [0x00000001].pack("N")
       c.close
-      print_status("#{peer} - Challenge: #{@challenge.unpack('H*')[0]}; Response: #{data.unpack('H*')[0]}")
+      print_good("#{peer} - Challenge: #{@challenge.unpack('H*')[0]}; Response: #{data.unpack('H*')[0]}")
       hash_line = "$vnc$*#{@state[c][:chall].unpack("H*")[0]}*#{data.unpack('H*')[0]}"
       report_cred(
         ip: c.peerhost,

@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpServer::HTML
   include Msf::Auxiliary::Report
 
@@ -52,7 +51,6 @@ class MetasploitModule < Msf::Auxiliary
     @myport   = datastore['SRVPORT']
     @realm    = datastore['REALM']
 
-    print_status("Listening on #{datastore['SRVHOST']}:#{datastore['SRVPORT']}...")
     exploit
   end
 
@@ -110,5 +108,4 @@ class MetasploitModule < Msf::Auxiliary
       cli.send_response(response)
     end
   end
-
 end

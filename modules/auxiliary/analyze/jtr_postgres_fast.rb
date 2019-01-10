@@ -1,11 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
-
 require 'msf/core/auxiliary/jtr'
-
 
 class MetasploitModule < Msf::Auxiliary
 
@@ -36,6 +34,11 @@ class MetasploitModule < Msf::Auxiliary
 
     # generate our wordlist and close the file handle
     wordlist = wordlist_file
+    unless wordlist
+      print_error('This module cannot run without a database connected. Use db_connect to connect to a database.')
+      return
+    end
+
     wordlist.close
 
 
@@ -107,11 +110,11 @@ class MetasploitModule < Msf::Auxiliary
 
   def hash_file
     hashlist = Rex::Quickfile.new("hashes_tmp")
-    Metasploit::Credential::PostgresMD5.joins(:cores).where(metasploit_credential_cores: { workspace_id: myworkspace.id }).each do |hash|
-      hash.cores.each do |core|
+    framework.db.creds(workspace: myworkspace, type: 'Metasploit::Credential::PostgresMD5').each do |core|
+      if core.private.jtr_format =~ /des/
         user = core.public.username
         @username_set << user
-        hash_string = "#{hash.data}"
+        hash_string = core.private.data
         hash_string.gsub!(/^md5/, '')
         id = core.id
         hashlist.puts "#{user}:#{hash_string}:#{id}:"
@@ -121,5 +124,4 @@ class MetasploitModule < Msf::Auxiliary
     print_status "Hashes written out to #{hashlist.path}"
     hashlist.path
   end
-
 end

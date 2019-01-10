@@ -1,13 +1,11 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
-
 
 require 'rex/proto/ipmi'
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Auxiliary::Report
   include Msf::Auxiliary::Scanner
 
@@ -25,7 +23,7 @@ class MetasploitModule < Msf::Auxiliary
       'References'  =>
         [
           ['URL', 'http://fish2.com/ipmi/remote-pw-cracking.html'],
-          ['URL', 'http://seclists.org/bugtraq/2014/Apr/16'], # HP's SSRT101367
+          ['URL', 'https://seclists.org/bugtraq/2014/Apr/16'], # HP's SSRT101367
           ['CVE', '2013-4786'],
           ['OSVDB', '95057'],
           ['BID', '61076'],
@@ -47,6 +45,14 @@ class MetasploitModule < Msf::Auxiliary
       OptBool.new('CRACK_COMMON', [true, "Automatically crack common passwords as they are obtained", true])
     ])
 
+  end
+
+  def post_auth?
+    true
+  end
+
+  def default_cred?
+    true
   end
 
   def ipmi_status(msg)

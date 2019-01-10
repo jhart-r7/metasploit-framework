@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -25,7 +25,7 @@ class MetasploitModule < Msf::Auxiliary
         OptBool.new('ENUM_YAHOO', [ true, "Enable Yahoo Search Subdomains", true])
       ])
 
-    deregister_options('RHOST', 'RPORT', 'VHOST', 'SSL', 'Proxies')
+    deregister_options('RHOST', 'RHOSTS', 'RPORT', 'VHOST', 'SSL', 'Proxies')
   end
 
   def rhost_yahoo

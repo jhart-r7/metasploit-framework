@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpClient
   include Msf::Auxiliary::Report
 
@@ -41,6 +40,14 @@ class MetasploitModule < Msf::Auxiliary
         OptString.new('USERNAME', [ false, 'Apache Rave Username' ]),
         OptString.new('PASSWORD', [ false, 'Apache Rave Password' ]),
       ])
+  end
+
+  def post_auth?
+    true
+  end
+
+  def default_cred?
+    true
   end
 
   def login(username, password)
@@ -156,9 +163,9 @@ class MetasploitModule < Msf::Auxiliary
       print_status("#{rhost}:#{rport} - Login with the provided credentials...")
       cookie = login(datastore["USERNAME"], datastore["PASSWORD"])
       if cookie.nil?
-        print_error("#{rhost}:#{rport} - Login failed.")
+        print_error("#{rhost}:#{rport} - Login failed")
       else
-        print_good("#{rhost}:#{rport} - Login successful. Proceeding...")
+        print_good("#{rhost}:#{rport} - Login Successful. Proceeding...")
       end
     end
 
@@ -168,7 +175,7 @@ class MetasploitModule < Msf::Auxiliary
         print_status("#{rhost}:#{rport} - Login with the #{user} default account...")
         cookie = login(user, password)
         unless cookie.nil?
-          print_good("#{rhost}:#{rport} - Login successful. Proceeding...")
+          print_good("#{rhost}:#{rport} - Login Successful. Proceeding...")
           break
         end
       }
@@ -228,5 +235,4 @@ class MetasploitModule < Msf::Auxiliary
     end
 
   end
-
 end

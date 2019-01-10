@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -112,7 +112,8 @@ class MetasploitModule < Msf::Auxiliary
         workspace_id: myworkspace_id,
         status: Metasploit::Model::Login::Status::UNTRIED
       }.merge(service_details)
-      create_credential_and_login(connection_details)
+
+      framework.db.create_credential_and_login(connection_details)
       @users_found[user] = :reported
       return :next_user
     else
@@ -151,7 +152,7 @@ class MetasploitModule < Msf::Auxiliary
 
     if not usernames.empty?
       p = store_loot('wordpress.users', 'text/plain', rhost, usernames * "\n", "#{rhost}_wordpress_users.txt")
-      print_status("#{target_uri} - Usernames stored in: #{p}")
+      print_good("#{target_uri} - Usernames stored in: #{p}")
     end
 
     return usernames

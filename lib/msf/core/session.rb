@@ -214,8 +214,9 @@ module Session
 
     dstr  = sprintf("%.4d%.2d%.2d", dt.year, dt.mon, dt.mday)
     rhost = session_host.gsub(':', '_')
+    sname = name.to_s.gsub(/\W+/,'_')
 
-    "#{dstr}_#{rhost}_#{type}"
+    "#{dstr}_#{sname}_#{rhost}_#{type}"
   end
 
   #
@@ -326,7 +327,14 @@ module Session
   # Get an arch/platform combination
   #
   def session_type
-    "#{self.arch}/#{self.platform}"
+    # avoid unnecessary slash separator
+    if !self.arch.nil? && !self.arch.empty? && !self.platform.nil? && !self.platform.empty?
+      separator =  '/'
+    else
+      separator = ''
+    end
+
+    "#{self.arch}#{separator}#{self.platform}"
   end
 
 

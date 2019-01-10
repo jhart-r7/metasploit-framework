@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Post
-
   include Msf::Post::File
   include Msf::Auxiliary::Report
 
@@ -34,7 +33,7 @@ class MetasploitModule < Msf::Post
   def load_file(fname)
     begin
       data = cmd_exec("cat #{fname}")
-    rescue RequestError => e
+    rescue Rex::Post::Meterpreter::RequestError => e
       print_error("Failed to retrieve file. #{e.message}")
       data = ''
     end
@@ -147,5 +146,4 @@ class MetasploitModule < Msf::Post
       extract_secrets(f)
     end
   end
-
 end

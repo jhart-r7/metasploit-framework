@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -129,8 +129,8 @@ class MetasploitModule < Msf::Auxiliary
 
     results.each do |result|
       if datastore['STORE']
-        stored_path = store_loot('windows.gpp.xml', 'text/plain', ip, xml_file[:xml], file_type, xml_file[:path])
-        print_status("XML file saved to: #{stored_path}")
+        stored_path = store_loot('microsoft.windows.gpp', 'text/xml', ip, xml_file[:xml], file_type, xml_file[:path])
+        print_good("XML file saved to: #{stored_path}")
       end
 
       report_creds(ip, result[:USER], result[:PASS])

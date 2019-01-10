@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -12,7 +12,6 @@ NTLM_CRYPT = Rex::Proto::NTLM::Crypt
 MESSAGE = Rex::Proto::NTLM::Message
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::TcpServer
   include Msf::Exploit::Remote::SMB::Server
   include Msf::Auxiliary::Report
@@ -77,8 +76,6 @@ class MetasploitModule < Msf::Auxiliary
     # those variables will prevent to spam the screen with identical hashes (works only with ntlmv1)
     @previous_lm_hash="none"
     @previous_ntlm_hash="none"
-
-    print_status("Listening on #{datastore['SRVHOST']}:#{datastore['SRVPORT']}...")
 
     exploit()
   end

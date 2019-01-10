@@ -1,5 +1,5 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
@@ -330,7 +330,7 @@ class MetasploitModule < Msf::Auxiliary
       @smb_redirect = info[1]
 
       begin
-        connect
+        connect(versions: [2,1])
         smb_login
         shares = smb_netshareenumall
 

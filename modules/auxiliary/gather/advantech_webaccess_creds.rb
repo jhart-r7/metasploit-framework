@@ -1,10 +1,9 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
 
 class MetasploitModule < Msf::Auxiliary
-
   include Msf::Exploit::Remote::HttpClient
 
   def initialize(info={})
@@ -24,6 +23,7 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'References'     =>
         [
+          ['CVE', '2016-5810'],
           ['URL', 'https://github.com/rapid7/metasploit-framework/pull/7859#issuecomment-274305229']
         ],
       'DisclosureDate' => "Jan 21 2017"
@@ -169,5 +169,4 @@ class MetasploitModule < Msf::Auxiliary
       end
     end
   end
-
 end

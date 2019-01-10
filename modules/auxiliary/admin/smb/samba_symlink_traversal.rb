@@ -1,9 +1,7 @@
 ##
-# This module requires Metasploit: http://metasploit.com/download
+# This module requires Metasploit: https://metasploit.com/download
 # Current source: https://github.com/rapid7/metasploit-framework
 ##
-
-
 
 class MetasploitModule < Msf::Auxiliary
 
@@ -32,6 +30,7 @@ class MetasploitModule < Msf::Auxiliary
         ],
       'References'  =>
         [
+          ['CVE', '2010-0926'],
           ['OSVDB', '62145'],
           ['URL', 'http://www.samba.org/samba/news/symlink_attack.html']
         ],
@@ -61,5 +60,4 @@ class MetasploitModule < Msf::Auxiliary
     print_status("\t\\\\#{rhost}\\#{datastore['SMBSHARE']}\\#{datastore['SMBTARGET']}\\")
     print_line("")
   end
-
 end
