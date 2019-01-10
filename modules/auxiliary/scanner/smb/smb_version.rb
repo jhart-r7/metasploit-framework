@@ -48,6 +48,7 @@ class MetasploitModule < Msf::Auxiliary
 
     begin
       res = smb_fingerprint()
+      disconnect
 
       #
       # Create the note hash for smb.fingerprint
@@ -57,17 +58,18 @@ class MetasploitModule < Msf::Auxiliary
          :native_lm => res['native_lm']
       }
 
+      #
+      # Create the note hash for fingerprint.match
+      #
+      match_conf = { }
+      #
+      # Create a descriptive string for service.info
+      #
+      desc = ''
+
+      # OS fingerprinting if OS data found
       if res['os'] and res['os'] != 'Unknown'
-
-        #
-        # Create the note hash for fingerprint.match
-        #
-        match_conf = { }
-
-        #
-        # Create a descriptive string for service.info
-        #
-        desc = res['os'].dup
+        desc << res['os']
 
         if res['edition'].to_s.length > 0
           desc << " #{res['edition']}"
@@ -121,6 +123,31 @@ class MetasploitModule < Msf::Auxiliary
           match_conf['host.domain'] = conf[:SMBDomain]
         end
 
+        # Report a fingerprint.match hash for name, domain, and language
+        # Ignore OS fields, as those are handled via smb.fingerprint
+        report_note(
+          :host  => ip,
+          :port  => rport,
+          :proto => 'tcp',
+          :ntype => 'fingerprint.match',
+          :data  => match_conf
+        )
+
+        # Report a smb.fingerprint hash of attributes for OS fingerprinting
+        report_note(
+          :host  => ip,
+          :port  => rport,
+          :proto => 'tcp',
+          :ntype => 'smb.fingerprint',
+          :data  => conf
+        )
+      end
+
+      if res['service'] and res['service'] != 'Unknown'
+        desc << res['service']
+      end
+
+      if !desc.blank?
         print_good("Host is running #{desc}")
 
         # Report the service with a friendly banner
@@ -131,41 +158,20 @@ class MetasploitModule < Msf::Auxiliary
           :name  => 'smb',
           :info  => desc
         )
-
-        # Report a fingerprint.match hash for name, domain, and language
-        # Ignore OS fields, as those are handled via smb.fingerprint
-        report_note(
-          :host  => ip,
-          :port  => rport,
-          :proto => 'tcp',
-          :ntype => 'fingerprint.match',
-          :data  => match_conf
-        )
       else
-        descs = []
-        descs << "native_lm=#{res['native_lm']}" unless res['native_lm'].blank?
-        descs << "native_os=#{res['native_os']}" unless res['native_os'].blank?
-        desc = descs.join(' ')
-        if desc.blank?
+        native_fps = []
+        native_fps << "native_lm=#{res['native_lm']}" unless res['native_lm'].blank?
+        native_fps << "native_os=#{res['native_os']}" unless res['native_os'].blank?
+        native_fps = native_fps.join(' ')
+        if native_fps.blank?
           report_service(:host => ip, :port => rport, :name => 'smb')
           print_status("Host could not be identified: no native LM/OS info obtained")
         else
-          desc = "no native LM/OS info obtained" if desc.blank?
-          report_service(:host => ip, :port => rport, :name => 'smb', :info => desc)
-          print_status("Host could not be identified: #{desc}")
+          native_fps = "no native LM/OS info obtained" if native_fps.blank?
+          report_service(:host => ip, :port => rport, :name => 'smb', :info => native_fps)
+          print_status("Host could not be identified: #{native_fps}")
         end
       end
-
-      # Report a smb.fingerprint hash of attributes for OS fingerprinting
-      report_note(
-        :host  => ip,
-        :port  => rport,
-        :proto => 'tcp',
-        :ntype => 'smb.fingerprint',
-        :data  => conf
-      )
-
-      disconnect
 
       break
 
